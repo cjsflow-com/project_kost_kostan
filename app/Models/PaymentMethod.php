@@ -15,6 +15,17 @@ class PaymentMethod extends Model
         'is_active',
     ];
 
+    const TYPES = [
+        'bank_transfer' => 'Bank Transfer',
+        'e_wallet' => 'E-Wallet',
+        'cash' => 'Cash',
+    ];
+
+    public function getTypeNameAttribute()
+    {
+        return self::TYPES[$this->type] ?? 'Unknown';
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);

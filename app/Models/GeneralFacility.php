@@ -12,4 +12,9 @@ class GeneralFacility extends Model
         'description',
         'image',
     ];
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image ? asset('storage/' . $this->image) : null;
+    }
 }
