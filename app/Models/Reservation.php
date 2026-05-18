@@ -54,6 +54,11 @@ class Reservation extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function statusHistories()
+    {
+        return $this->hasMany(ReservationStatusHistory::class);
+    }
+
     public function getStatusLabelAttribute()
     {
         return self::STATUS[$this->status] ?? 'Tidak Diketahui';
