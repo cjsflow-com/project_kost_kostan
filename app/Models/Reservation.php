@@ -15,10 +15,6 @@ class Reservation extends Model
         'start_date',
         'duration_month',
         'customer_id',
-        'customer_name',
-        'customer_phone',
-        'customer_email',
-        'customer_address',
         'customer_ktp_card',
         'room_price',
         'admin_fee',
@@ -40,14 +36,15 @@ class Reservation extends Model
         'expired' => 'Kadaluarsa',
     ];
 
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
+    }
+    
+
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function admin(){

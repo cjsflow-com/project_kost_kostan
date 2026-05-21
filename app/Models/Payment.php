@@ -13,6 +13,7 @@ class Payment extends Model
         'amount',
         'payment_code',
         'status',
+        'payment_proof',
         'paid_at',
         'note',
     ];
