@@ -82,9 +82,6 @@ class PaymentController extends Controller
             ->latest()
             ->paginate(10);
 
-        return response()->json([
-            'message' => 'Daftar pembayaran customer',
-            'data' => $payments
-        ]);
+            return BaseResponse::success($payments, 'Riwayat pembayaran berhasil diambil');
     }
 }
