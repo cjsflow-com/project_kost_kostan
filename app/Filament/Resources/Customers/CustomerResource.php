@@ -20,9 +20,11 @@ class CustomerResource extends Resource
 {
     protected static ?string $model = Customer::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    // protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'customer';
+
+    protected static ?string $navigationLabel = 'Pelanggan';
 
     public static function form(Schema $schema): Schema
     {
@@ -37,6 +39,11 @@ class CustomerResource extends Resource
     public static function table(Table $table): Table
     {
         return CustomersTable::configure($table);
+    }
+
+    public static function getNavigationIcon(): string
+    {
+         return 'fas-users';
     }
 
     public static function getRelations(): array

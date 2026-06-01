@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Customers\Tables;
+namespace App\Filament\Resources\RoomFacilities\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -9,29 +9,24 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class CustomersTable
+class RoomFacilitiesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Nama')
                     ->searchable(),
-                TextColumn::make('email')
-                    ->label('Email')
-                    ->label('Email address')
+                TextColumn::make('icon')
                     ->searchable(),
-                TextColumn::make('phone')
-                    ->label('Telepon')  
-                    ->searchable(),
-                TextColumn::make('address')
-                    ->label('Alamat')
-                    ->searchable(),
-                TextColumn::make('gender')
-                    ->label('Jenis Kelamin')
-                    ->numeric()
-                    ->sortable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
