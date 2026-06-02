@@ -28,6 +28,8 @@ class YesPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->registration()
+            ->brandName('Cicio Rimbun Kost')
             ->colors([
                 'primary' => Color::Amber,
             ])
