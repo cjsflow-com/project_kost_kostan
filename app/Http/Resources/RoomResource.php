@@ -19,7 +19,7 @@ class RoomResource extends JsonResource
             'room_number' => $this->room_number,
             'title' => $this->title,
             'description' => $this->description,
-            'price_per_month' => $this->price_per_month,
+            'price_per_month' => (int)$this->price_per_month,
             'room_size' => $this->room_size,
             'floor' => $this->floor,
             'capacity' => $this->capacity,
