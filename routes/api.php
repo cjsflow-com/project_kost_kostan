@@ -25,8 +25,8 @@ Route::prefix('rooms')->controller(RoomController::class)->group(function () {
 
 Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
 
-Route::middleware('auth:customers')->prefix('reservations')->controller(ReservationController::class)->group(function () {
-    Route::post('/', 'store');
+Route::middleware('auth:customer')->prefix('reservations')->controller(ReservationController::class)->group(function () {
+    Route::post('/create', 'store');
     Route::post('/{id}/approve', 'approve');
     Route::post('/{id}/cancel', 'cancel');
     Route::post('/{id}/verify-payment', 'verifyPayment');
@@ -34,7 +34,8 @@ Route::middleware('auth:customers')->prefix('reservations')->controller(Reservat
     Route::get('my-reservations', 'myReservations');
 });
 
-Route::middleware('auth:customers')->prefix('payments')->controller(PaymentController::class)->group(function () {
+Route::middleware('auth:customer')->prefix('payments')->controller(PaymentController::class)->group(function () {
+    Route::post('/create', 'store');
     Route::get('/history', 'paymentHistory');
     Route::post('/{id}/upload-proof', 'uploadPaymentProof');
 });

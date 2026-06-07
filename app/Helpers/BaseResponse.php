@@ -15,7 +15,7 @@ class BaseResponse
     {
         return response()->json([
             'success' => false,
-            'message' => $message,
+            'message' => "$message => {$errors[0]}", // Ambil pesan error pertama jika ada
             'errors' => $errors
         ], $code);
     }

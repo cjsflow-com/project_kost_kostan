@@ -18,7 +18,6 @@ class PaymentMethod extends Model
     const TYPES = [
         'bank_transfer' => 'Bank Transfer',
         'e_wallet' => 'E-Wallet',
-        'cash' => 'Cash',
     ];
 
     public function getTypeNameAttribute()

@@ -20,11 +20,16 @@ class Payment extends Model
 
     protected $appends = ['status_label'];
 
+    const STATUS_PENDING = 'pending';
+    const STATUS_UPLOADED = 'uploaded';
+    const STATUS_VERIFIED = 'verified';
+    const STATUS_REJECTED = 'rejected';
+
     const STATUS = [
-        'pending' => 'Sedang Menunggu Pembayaran',
-        'uploaded' => 'Bukti Pembayaran Telah Diupload',
-        'verified' => 'Pembayaran Telah Diverifikasi',
-        'rejected' => 'Pembayaran Ditolak',
+        self::STATUS_PENDING => 'Sedang Menunggu Pembayaran',
+        self::STATUS_UPLOADED => 'Bukti Pembayaran Telah Diupload',
+        self::STATUS_VERIFIED => 'Pembayaran Telah Diverifikasi',
+        self::STATUS_REJECTED => 'Pembayaran Ditolak',
     ];
 
     public function getStatusLabelAttribute()

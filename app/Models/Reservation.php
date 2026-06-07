@@ -15,7 +15,6 @@ class Reservation extends Model
         'start_date',
         'duration_month',
         'customer_id',
-        'customer_ktp_card',
         'room_price',
         'admin_fee',
         'deposit',
@@ -26,19 +25,32 @@ class Reservation extends Model
 
     protected $appends = ['status_label'];
 
-    const STATUS = [
-        'pending' => 'Menunggu Konfirmasi',
-        'waiting_payment' => 'Menunggu Pembayaran',
-        'payment_uploaded' => 'Bukti Pembayaran Diupload',
-        'approved' => 'Disetujui',
-        'rejected' => 'Ditolak',
-        'cancelled' => 'Dibatalkan',
-        'expired' => 'Kadaluarsa',
+       // keys untuk database
+    const STATUS_PENDING = 'pending';
+    const STATUS_WAITING_PAYMENT = 'waiting_payment';
+    const STATUS_APPROVED = 'approved';
+    const STATUS_REJECTED = 'rejected';
+    const STATUS_CANCELLED = 'cancelled';
+    const STATUS_EXPIRED = 'expired';
+
+    // mapping key => label untuk UI
+    const STATUS_LABELS = [
+        self::STATUS_PENDING => 'Menunggu Konfirmasi',
+        self::STATUS_WAITING_PAYMENT => 'Menunggu Pembayaran',
+        self::STATUS_APPROVED => 'Disetujui',
+        self::STATUS_REJECTED => 'Ditolak',
+        self::STATUS_CANCELLED => 'Dibatalkan',
+        self::STATUS_EXPIRED => 'Kadaluarsa',
     ];
 
     public function payment()
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'room_id');
     }
     
 
@@ -58,7 +70,7 @@ class Reservation extends Model
 
     public function getStatusLabelAttribute()
     {
-        return self::STATUS[$this->status] ?? 'Tidak Diketahui';
+        return self::STATUS_LABELS[$this->status] ?? 'Tidak Diketahui';
     }
 
 }

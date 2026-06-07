@@ -10,6 +10,7 @@ use App\Models\Room;
 use App\Models\ReservationStatusHistory;
 use App\Models\Customer;
 use App\Models\Payment;
+use Illuminate\Support\Facades\Log;
 use BaseResponse as GlobalBaseResponse;
 
 class ReservationController extends Controller
@@ -32,8 +33,8 @@ class ReservationController extends Controller
             'room_id' => 'required|exists:rooms,id',
             'start_date' => 'required|date',
             'duration_month' => 'required|integer|min:1',
-            'deposit' => 'required|numeric|min:0',
-            'customer_ktp_card' => 'nullable|string',
+            'deposit' => 'required|integer|min:0',
+            'admin_fee' => 'required|integer|min:0',
         ]);
 
         $room = Room::findOrFail($request->room_id);
@@ -41,17 +42,25 @@ class ReservationController extends Controller
         $customer = auth('customer')->user();
 
         if (!$customer) {
-            $customer = Customer::create([
-                'name' => $request->customer_name,
-                'email' => $request->customer_email,
-                'phone' => $request->customer_phone,
-                'address' => $request->customer_address,
-                'password' => bcrypt($request->customer_password), // default password, bisa diubah nanti
-                'gender' => $request->customer_gender
-            ]);
+            return response()->json([
+                'message' => 'Customer belum login.'
+            ], 401);
         }
 
-        $total_price = ($room->price * $request->duration_month) + $request->deposit + $room->admin_fee;
+        $existingReservation = Reservation::where('customer_id', $customer->id)
+            ->where('room_id', $request->room_id)
+            ->whereIn('status', [
+                Reservation::STATUS_PENDING,
+                Reservation::STATUS_WAITING_PAYMENT,
+            ])->first();
+
+            if ($existingReservation) {
+                return response()->json([
+                    'message' => 'Anda masih memiliki reservasi aktif untuk kamar ini. Silakan selesaikan pembayaran terlebih dahulu.'
+                ], 422);
+            }
+
+        $total_price = ($room->price_per_month * $request->duration_month) + $request->deposit + $request->admin_fee;
 
         DB::beginTransaction();
 
@@ -63,34 +72,23 @@ class ReservationController extends Controller
                 'room_id' => $request->room_id,
                 'start_date' => $request->start_date,
                 'duration_month' => $request->duration_month,
-                'customer_ktp_card' => $request->customer_ktp_card,
                 'room_price' => $room->price_per_month,
-                'admin_fee' => $room->admin_fee,
+                'admin_fee' => $request->admin_fee,
                 'deposit' => $request->deposit,
                 'total_price' => $total_price,
-                'status' => Reservation::STATUS['pending'],
+                'status' => Reservation::STATUS_PENDING,
             ]);
 
-            // Step 2: generate reservation  code
-            $reservation->update([
-                'reservation_code' => 'RK-' . now()->format('Ymd') . '-' . str_pad($reservation->id, 4, '0', STR_PAD_LEFT),
-            ]);
+            $reservation->reservation_code = 'RK-' . now()->format('Ymd') . '-' . str_pad($reservation->id, 4, '0', STR_PAD_LEFT);
 
-            $payment = Payment::create([
-                'reservation_id' => $reservation->id,
-                'payment_method_id' => $request->payment_method_id, // nanti diupdate saat customer upload bukti pembayaran
-                'amount' => $total_price,
-                'status' => Payment::STATUS['pending'],
-            ]);
+            // Step 3: save update
+            $reservation->save();
 
-            $payment->update([
-                'payment_code' => 'PAY-' . now()->format('Ymd') . '-' . str_pad($payment->id, 4, '0', STR_PAD_LEFT),
-            ]);
 
             // Step 3: insert initial status history
             ReservationStatusHistory::create([
                 'reservation_id' => $reservation->id,
-                'status' => Reservation::STATUS['pending'],
+                'status' => Reservation::STATUS_PENDING,
                 'title' => 'Pending',
                 'description' => 'Reservasi telah dibuat, menunggu konfirmasi admin',
             ]);
@@ -98,13 +96,16 @@ class ReservationController extends Controller
              DB::commit();
             return GlobalBaseResponse::success([
             'reservation' => $reservation,
-            'payment' => $payment
         ], 'Reservasi berhasil dibuat');
         
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['message' => 'Gagal membuat reservasi', 'error' => $e->getMessage()], 500);
+            Log::error('Error create reservation: '.$e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all(),
+            ]);
+            return response()->json(['message' => 'Gagal membuat reservasi => ' . $e->getMessage(), 'trace' => $e->getTraceAsString()], 500);
         }
     }
 

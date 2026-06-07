@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Reservations\Tables;
 
+use App\Models\Reservation;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -15,11 +16,11 @@ class ReservationsTable
     {
         return $table
             ->columns([
-                TextColumn::make('user_id')
+                TextColumn::make('customer.name')
                     ->label('Nama Pelanggan')
                      ->searchable()
                     ->sortable(),
-                TextColumn::make('room_id')
+                TextColumn::make('room.title')
                     ->label('Nama Kamar')
                      ->searchable()
                     ->numeric()
@@ -27,9 +28,6 @@ class ReservationsTable
                 TextColumn::make('reservation_code')
                     ->label('Kode Pemesanan')
                      ->searchable()
-                    ->searchable(),
-                TextColumn::make('customer_ktp_card')
-                    ->label('KTP Pelanggan')
                     ->searchable(),
                 TextColumn::make('start_date')
                     ->label('Tanggal Mulai' )
@@ -56,37 +54,26 @@ class ReservationsTable
                     ->money()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->badge(),
-                TextColumn::make('payment_due_at')
-                    ->label('Tanggal Jatuh Tempo Pembayaran')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('approved_at')
-                    ->label('Tanggal Disetujui')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('rejected_at')
-                    ->label('Tanggal Ditolak')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('cancelled_at')
-                    ->label('Tanggal Dibatalkan')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('expired_at')
-                    ->label('Tanggal Kedaluwarsa')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('customer_id')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => Reservation::STATUS_LABELS[$state] ?? $state)
+                    ->color(fn (string $state): string => match ($state) {
+                        Reservation::STATUS_PENDING => 'warning',
+                        Reservation::STATUS_WAITING_PAYMENT => 'info',
+                        Reservation::STATUS_PAYMENT_UPLOADED => 'primary',
+                        Reservation::STATUS_APPROVED => 'success',
+                        Reservation::STATUS_REJECTED => 'danger',
+                        Reservation::STATUS_CANCELLED => 'gray',
+                        Reservation::STATUS_EXPIRED => 'danger',
+                        default => 'gray',
+                    }),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                // ViewAction::make(),
+                // EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
