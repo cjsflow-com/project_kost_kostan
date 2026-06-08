@@ -43,6 +43,10 @@ class Reservation extends Model
         self::STATUS_EXPIRED => 'Kadaluarsa',
     ];
 
+    protected $casts = [
+        'total_price' => 'integer',
+    ];
+
     public function payment()
     {
         return $this->hasOne(Payment::class);
