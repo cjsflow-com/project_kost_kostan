@@ -8,7 +8,6 @@ use App\Models\Reservation;
 use Illuminate\Support\Facades\DB;
 use App\Models\Room;
 use App\Models\ReservationStatusHistory;
-use App\Models\Customer;
 use App\Models\Payment;
 use Illuminate\Support\Facades\Log;
 use BaseResponse as GlobalBaseResponse;
@@ -21,6 +20,10 @@ class ReservationController extends Controller
     public function index()
     {
         //
+        $customer = auth('customer')->user();
+        $reservations = Reservation::where('customer_id', $customer->id)->where('status', '!=', Reservation::STATUS_APPROVED)->latest()->get();
+
+        return GlobalBaseResponse::success($reservations);
     }
 
     /**
@@ -97,7 +100,7 @@ class ReservationController extends Controller
             return GlobalBaseResponse::success([
             'reservation' => $reservation,
         ], 'Reservasi berhasil dibuat');
-        
+
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -175,7 +178,7 @@ class ReservationController extends Controller
 
         return GlobalBaseResponse::success($reservation);
     }
-    
+
 
     /**
      * Reject reservasi (Admin)

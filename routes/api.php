@@ -26,6 +26,7 @@ Route::prefix('rooms')->controller(RoomController::class)->group(function () {
 Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
 
 Route::middleware('auth:customer')->prefix('reservations')->controller(ReservationController::class)->group(function () {
+    Route::get('/', 'index');
     Route::post('/create', 'store');
     Route::post('/{id}/approve', 'approve');
     Route::post('/{id}/cancel', 'cancel');

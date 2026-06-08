@@ -36,6 +36,7 @@ class AuthController extends Controller
             'phone' => $request->phone,
             'password' => $request->password,
             'gender' => $request->gender,
+            'address' => $request->address,
         ]);
 
         $token = $customer->createToken('customer_token')->plainTextToken;
