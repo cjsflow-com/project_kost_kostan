@@ -21,7 +21,10 @@ class ReservationController extends Controller
     {
         //
         $customer = auth('customer')->user();
-        $reservations = Reservation::where('customer_id', $customer->id)->where('status', '!=', Reservation::STATUS_APPROVED)->latest()->get();
+        $reservations = Reservation::where('customer_id', $customer->id)->whereNotIn('status', [
+        Reservation::STATUS_APPROVED,
+        Reservation::STATUS_CANCELLED,
+    ])->latest()->get();
 
         return GlobalBaseResponse::success($reservations);
     }
@@ -126,13 +129,13 @@ class ReservationController extends Controller
     {
         $reservation = Reservation::findOrFail($id);
 
-        if($reservation->status != Reservation::STATUS['pending']){
+        if($reservation->status != Reservation::STATUS_PENDING){
             // return response()->json(['message' => 'Reservasi tidak bisa diapprove'], 400);
             return GlobalBaseResponse::error('Reservasi tidak bisa diapprove', 400);
         }
 
         $reservation->update([
-            'status' => Reservation::STATUS['waiting_payment'],
+            'status' => Reservation::STATUS_WAITING_PAYMENT,
             'approved_at' => now(),
             'payment_due_at' => now()->addDays(2) // batas pembayaran 2 hari
         ]);
@@ -142,7 +145,7 @@ class ReservationController extends Controller
         // insert status history
         ReservationStatusHistory::create([
             'reservation_id' => $reservation->id,
-            'status' => Reservation::STATUS['waiting_payment'],
+            'status' => Reservation::STATUS_WAITING_PAYMENT,
             'title' => 'Menunggu Pembayaran',
             'description' => 'Reservasi diterima, silakan lakukan pembayaran sebelum batas waktu',
         ]);
@@ -155,7 +158,7 @@ class ReservationController extends Controller
     {
         $reservation = Reservation::findOrFail($id);
 
-        if($reservation->status != Reservation::STATUS['waiting_payment']){
+        if($reservation->status != Reservation::STATUS_WAITING_PAYMENT){
             return GlobalBaseResponse::error('Reservasi tidak dalam status menunggu pembayaran', 400);
         }
 
@@ -186,28 +189,27 @@ class ReservationController extends Controller
         return GlobalBaseResponse::success($reservation);
     }
 
-
     /**
      * Reject reservasi (Admin)
      */
-    public function reject($id)
-    {
-        $reservation = Reservation::findOrFail($id);
+    // public function reject($id)
+    // {
+    //     $reservation = Reservation::findOrFail($id);
 
-        $reservation->update([
-            'status' => Reservation::STATUS['rejected'],
-            'rejected_at' => now(),
-        ]);
+    //     $reservation->update([
+    //         'status' => Reservation::STATUS['rejected'],
+    //         'rejected_at' => now(),
+    //     ]);
 
-        ReservationStatusHistory::create([
-            'reservation_id' => $reservation->id,
-            'status' => Reservation::STATUS['rejected'],
-            'title' => 'Ditolak',
-            'description' => 'Reservasi ditolak admin',
-        ]);
+    //     ReservationStatusHistory::create([
+    //         'reservation_id' => $reservation->id,
+    //         'status' => Reservation::STATUS['rejected'],
+    //         'title' => 'Ditolak',
+    //         'description' => 'Reservasi ditolak admin',
+    //     ]);
 
-        return GlobalBaseResponse::success($reservation);
-    }
+    //     return GlobalBaseResponse::success($reservation);
+    // }
 
      /**
      * Cancel reservasi (Customer)
@@ -220,7 +222,7 @@ class ReservationController extends Controller
             return GlobalBaseResponse::error('Unauthorized', 401);
         }
 
-        $allowed_statuses = [Reservation::STATUS['pending'], Reservation::STATUS['waiting_payment']];
+        $allowed_statuses = [Reservation::STATUS_PENDING, Reservation::STATUS_WAITING_PAYMENT];
 
         if(!in_array($reservation->status, $allowed_statuses)){
             return GlobalBaseResponse::error('Reservasi tidak bisa dibatalkan', 400);
@@ -238,7 +240,10 @@ class ReservationController extends Controller
             'description' => 'Reservasi dibatalkan oleh customer',
         ]);
 
-        return GlobalBaseResponse::success($reservation);
+        return response()->json([
+            'success' => true,
+            'message' => 'Reservasi ' . $reservation->reservation_code . ' berhasil dibatalkan',
+        ]);
     }
  /**
      * Cek status reservasi via code + phone (untuk user tanpa login)

@@ -60,7 +60,6 @@ class ReservationsTable
                     ->color(fn (string $state): string => match ($state) {
                         Reservation::STATUS_PENDING => 'warning',
                         Reservation::STATUS_WAITING_PAYMENT => 'info',
-                        Reservation::STATUS_PAYMENT_UPLOADED => 'primary',
                         Reservation::STATUS_APPROVED => 'success',
                         Reservation::STATUS_REJECTED => 'danger',
                         Reservation::STATUS_CANCELLED => 'gray',

@@ -61,10 +61,12 @@ class PaymentsTable
                     ->action(function (Payment $record) {
                         $record->update([
                             'status' => 'verified',
+                            'verified_at' => now(),
                         ]);
 
                         $record->reservation()->update([
                             'status' => 'approved',
+                            'approved_at' => now(),
                         ]);
 
                         $record->reservation->room()->update([
@@ -96,10 +98,12 @@ class PaymentsTable
                     ->action(function (Payment $record) {
                         $record->update([
                             'status' => 'rejected',
+                            'rejected_at' => now(),
                         ]);
 
                         $record->reservation()->update([
                             'status' => 'rejected',
+                            'cancelled_at' => now(),
                         ]);
 
                         $record->reservation->statusHistories()->create([

@@ -11,12 +11,11 @@ class BaseResponse
         ], $code);
     }
 
-    public static function error($message = 'Error', $code = 400, $errors = null)
+    public static function error($message = 'Error', $code = 400)
     {
         return response()->json([
             'success' => false,
-            'message' => "$message => {$errors[0]}", // Ambil pesan error pertama jika ada
-            'errors' => $errors
+            'message' => $message,
         ], $code);
     }
 }
