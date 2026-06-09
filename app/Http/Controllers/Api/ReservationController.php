@@ -26,6 +26,13 @@ class ReservationController extends Controller
         return GlobalBaseResponse::success($reservations);
     }
 
+    public function getStatusHistory($reservationId)
+    {
+        $histories = ReservationStatusHistory::where('reservation_id', $reservationId)->orderBy('created_at', 'asc')->get();
+
+        return GlobalBaseResponse::success($histories);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -70,7 +77,7 @@ class ReservationController extends Controller
         try{
             // Step 1: Create Reservation
             $reservation = Reservation::create([
-                'user_id' => null, // karena reservasi bisa dibuat tanpa login, jadi user_id kita set null
+                // 'user_id' => null, // karena reservasi bisa dibuat tanpa login, jadi user_id kita set null
                 'customer_id' => $customer->id,
                 'room_id' => $request->room_id,
                 'start_date' => $request->start_date,
@@ -220,13 +227,13 @@ class ReservationController extends Controller
         }
 
         $reservation->update([
-            'status' => Reservation::STATUS['cancelled'],
+            'status' => Reservation::STATUS_CANCELLED,
             'cancelled_at' => now(),
         ]);
 
         ReservationStatusHistory::create([
             'reservation_id' => $reservation->id,
-            'status' => Reservation::STATUS['cancelled'],
+            'status' => Reservation::STATUS_CANCELLED,
             'title' => 'Dibatalkan',
             'description' => 'Reservasi dibatalkan oleh customer',
         ]);

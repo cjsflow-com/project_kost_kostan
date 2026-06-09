@@ -23,8 +23,7 @@ class Room extends Model
     const STATUS = [
         0 => 'Perbaikan',
         1 => 'Tersedia',
-        2 => 'Dipesan',
-        3 => 'Sudah Ditempati',
+        2 => 'Sudah Ditempati',
     ];
 
     public function getStatusNameAttribute()

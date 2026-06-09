@@ -5,8 +5,8 @@ namespace App\Filament\Resources\Reservations\Tables;
 use App\Models\Reservation;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
+use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -70,10 +70,62 @@ class ReservationsTable
             ])
             ->filters([
                 //
+
             ])
             ->recordActions([
-                // ViewAction::make(),
-                // EditAction::make(),
+                 Action::make('konfirmasi')
+                    ->label('Konfirmasi')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Konfirmasi Pembayaran')
+                    ->modalDescription('Apakah kamu yakin ingin mengkonfirmasi pembayaran ini?')
+                    ->modalSubmitActionLabel('Ya, Konfirmasi')
+                    ->action(function (Reservation $record) {
+                        $record->update([
+                            'status' => 'waiting_payment',
+                        ]);
+
+                        $record->statusHistories()->create([
+                            'reservation_id' => $record->id,
+                            'status' => 'waiting_payment',
+                            'title' => 'Menunggu Pembayaran',
+                            'description' => 'Reservasi menunggu pembayaran dari customer',
+                        ]);
+
+                        Notification::make()
+                            ->title('Reservasi berhasil dikonfirmasi, menunggu pembayaran')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (Reservation $record) => in_array($record->status, ['pending'])),
+
+                Action::make('batal')
+                    ->label('Batal')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Batalkan Pembayaran')
+                    ->modalDescription('Apakah kamu yakin ingin membatalkan pembayaran ini?')
+                    ->modalSubmitActionLabel('Ya, Batalkan')
+                    ->action(function (Reservation $record) {
+                        $record->update([
+                            'status' => 'rejected',
+                        ]);
+
+                        $record->statusHistories()->create([
+                            'reservation_id' => $record->id,
+                            'status' => 'rejected',
+                            'title' => 'Reservasi Ditolak',
+                            'description' => 'Reservasi telah ditolak oleh admin',
+                        ]);
+
+                        Notification::make()
+                            ->title('Pembayaran berhasil dibatalkan')
+                            ->danger()
+                            ->send();
+                    })
+                    ->visible(fn (Reservation $record) => in_array($record->status, ['pending', 'waiting_payment'])),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

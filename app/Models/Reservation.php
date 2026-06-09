@@ -45,6 +45,9 @@ class Reservation extends Model
 
     protected $casts = [
         'total_price' => 'integer',
+        'deposit' => 'integer',
+        'admin_fee' => 'integer',
+        'room_price' => 'integer',
     ];
 
     public function payment()
@@ -56,7 +59,7 @@ class Reservation extends Model
     {
         return $this->belongsTo(Room::class, 'room_id');
     }
-    
+
 
     public function customer()
     {

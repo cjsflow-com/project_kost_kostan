@@ -33,7 +33,10 @@ Route::middleware('auth:customer')->prefix('reservations')->controller(Reservati
     Route::post('/{id}/verify-payment', 'verifyPayment');
     Route::get('check-status', 'checkStatus');
     Route::get('my-reservations', 'myReservations');
+    Route::get('/{reservationId}/status-history', 'getStatusHistory');
 });
+
+
 
 Route::middleware('auth:customer')->prefix('payments')->controller(PaymentController::class)->group(function () {
     Route::post('/create', 'store');

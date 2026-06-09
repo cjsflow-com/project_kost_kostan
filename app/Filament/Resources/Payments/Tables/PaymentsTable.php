@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\Payments\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use App\Models\Payment;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -15,13 +17,11 @@ class PaymentsTable
     {
         return $table
             ->columns([
-                TextColumn::make('reservation_id')
-                    ->label('ID Reservasi')
-                    ->numeric()
+                TextColumn::make('reservation.reservation_code')
+                    ->label('Kode Reservasi')
                     ->sortable(),
-                TextColumn::make('payment_method_id')
+                TextColumn::make('paymentMethod.name')
                     ->label('ID Metode Pembayaran')
-                    ->numeric()
                     ->sortable(),
                 TextColumn::make('payment_proof')
                     ->label('Bukti Pembayaran')
@@ -44,34 +44,83 @@ class PaymentsTable
                         default => 'gray',
                     })
                     ->badge(),
-                TextColumn::make('paid_at')
-                    ->label('Tanggal Dibayar')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('uploaded_at')
-                    ->label('Tanggal Diunggah')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('verified_at')
-                    ->label('Tanggal Diverifikasi')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('rejected_at')
-                    ->label('Tanggal Ditolak')
-                    ->dateTime()
-                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
                 ViewAction::make(),
+                Action::make('konfirmasi')
+                    ->label('Konfirmasi')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Konfirmasi Pembayaran')
+                    ->modalDescription('Apakah kamu yakin ingin mengkonfirmasi pembayaran ini?')
+                    ->modalSubmitActionLabel('Ya, Konfirmasi')
+                    ->action(function (Payment $record) {
+                        $record->update([
+                            'status' => 'verified',
+                        ]);
+
+                        $record->reservation()->update([
+                            'status' => 'approved',
+                        ]);
+
+                        $record->reservation->room()->update([
+                            'status' => 2,
+                        ]);
+
+                        $record->reservation->statusHistories()->create([
+                            'reservation_id' => $record->reservation->id,
+                            'status' => 'approved',
+                            'title' => 'Pembayaran Diverifikasi',
+                            'description' => 'Pembayaran telah diverifikasi, reservasi disetujui',
+                        ]);
+
+                        Notification::make()
+                            ->title('Pembayaran berhasil dikonfirmasi')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (Payment $record) => in_array($record->status, ['uploaded'])),
+
+                Action::make('batal')
+                    ->label('Batal')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Batalkan Pembayaran')
+                    ->modalDescription('Apakah kamu yakin ingin membatalkan pembayaran ini?')
+                    ->modalSubmitActionLabel('Ya, Batalkan')
+                    ->action(function (Payment $record) {
+                        $record->update([
+                            'status' => 'rejected',
+                        ]);
+
+                        $record->reservation()->update([
+                            'status' => 'rejected',
+                        ]);
+
+                        $record->reservation->statusHistories()->create([
+                            'reservation_id' => $record->reservation->id,
+                            'status' => 'rejected',
+                            'title' => 'Pembayaran Ditolak',
+                            'description' => 'Pembayaran telah ditolak, reservasi dibatalkan',
+                        ]);
+
+                        Notification::make()
+                            ->title('Pembayaran berhasil dibatalkan')
+                            ->danger()
+                            ->send();
+                    })
+                    ->visible(fn (Payment $record) => in_array($record->status, ['uploaded'])),
                 // EditAction::make(),
             ])
             ->toolbarActions([
-                // BulkActionGroup::make([
-                //     DeleteBulkAction::make(),
-                // ]),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 }
