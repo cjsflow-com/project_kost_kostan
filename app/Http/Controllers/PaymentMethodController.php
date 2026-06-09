@@ -19,4 +19,20 @@ class PaymentMethodController extends Controller
             'Daftar metode pembayaran berhasil diambil'
         );
     }
+
+    public function show($reservation_id)
+    {
+        $payment_method = PaymentMethod::whereHas('payments', function ($query) use ($reservation_id) {
+            $query->where('reservation_id', $reservation_id);
+        })->first();
+
+        if (!$payment_method) {
+            return BaseResponse::error('Metode pembayaran untuk reservasi ini tidak ditemukan', 404);
+        }
+
+        return BaseResponse::success(
+            new PaymentMethodResource($payment_method),
+            'Metode pembayaran untuk reservasi berhasil diambil'
+        );
+    }
 }
