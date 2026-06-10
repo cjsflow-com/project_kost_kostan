@@ -90,6 +90,7 @@ class ReservationController extends Controller
                 'deposit' => $request->deposit,
                 'total_price' => $total_price,
                 'status' => Reservation::STATUS_PENDING,
+                'payment_due_at' => now()->addHours(24),
             ]);
 
             $reservation->reservation_code = 'RK-' . now()->format('Ymd') . '-' . str_pad($reservation->id, 4, '0', STR_PAD_LEFT);
@@ -120,6 +121,17 @@ class ReservationController extends Controller
             ]);
             return response()->json(['message' => 'Gagal membuat reservasi => ' . $e->getMessage(), 'trace' => $e->getTraceAsString()], 500);
         }
+    }
+
+    public function show($id) {
+        $customer = auth('customer')->user();
+
+        if(!$customer){
+            return GlobalBaseResponse::error('Unauthorized', 401);
+        }
+
+        $reservation = Reservation::with(['room','payment.paymentMethod', 'statusHistories'])->where('customer_id', $customer->id)->findOrFail($id);
+        return GlobalBaseResponse::success($reservation);
     }
 
      /**
@@ -285,12 +297,12 @@ class ReservationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        //
-        $reservation = Reservation::with(['room', 'payments', 'statusHistories'])->findOrFail($id);
-        return GlobalBaseResponse::success($reservation);
-    }
+    // public function show(string $id)
+    // {
+    //     //
+    //     $reservation = Reservation::with(['room', 'payments', 'statusHistories'])->findOrFail($id);
+    //     return GlobalBaseResponse::success($reservation);
+    // }
 
     /**
      * Show the form for editing the specified resource.

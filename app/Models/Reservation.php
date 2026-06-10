@@ -21,6 +21,7 @@ class Reservation extends Model
         'total_price',
         'status',
         'note',
+        'payment_due_at',
     ];
 
     protected $appends = ['status_label'];
@@ -28,6 +29,7 @@ class Reservation extends Model
        // keys untuk database
     const STATUS_PENDING = 'pending';
     const STATUS_WAITING_PAYMENT = 'waiting_payment';
+    const STATUS_UPLOADED = 'uploaded';
     const STATUS_APPROVED = 'approved';
     const STATUS_REJECTED = 'rejected';
     const STATUS_CANCELLED = 'cancelled';
@@ -37,6 +39,7 @@ class Reservation extends Model
     const STATUS_LABELS = [
         self::STATUS_PENDING => 'Menunggu Konfirmasi',
         self::STATUS_WAITING_PAYMENT => 'Menunggu Pembayaran',
+        self::STATUS_UPLOADED => 'Bukti Pembayaran Telah Diupload',
         self::STATUS_APPROVED => 'Disetujui',
         self::STATUS_REJECTED => 'Ditolak',
         self::STATUS_CANCELLED => 'Dibatalkan',
@@ -48,6 +51,7 @@ class Reservation extends Model
         'deposit' => 'integer',
         'admin_fee' => 'integer',
         'room_price' => 'integer',
+        'payment_due_at' => 'datetime',
     ];
 
     public function payment()

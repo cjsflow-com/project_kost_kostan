@@ -80,7 +80,7 @@ class PaymentController extends Controller
         /**
          * cek expired
          */
-        if ($reservation->payment_due_at < now()) {
+        if ($reservation->payment_due_at->isPast()) {
 
             $reservation->update([
                 'status' => Reservation::STATUS_EXPIRED,
@@ -105,6 +105,10 @@ class PaymentController extends Controller
             'payment_proof' => $filename,
             'status' => Payment::STATUS_UPLOADED,
             'paid_at' => now(),
+        ]);
+
+        $reservation->update([
+            'status' => Reservation::STATUS_UPLOADED,
         ]);
 
         // insert status history

@@ -24,7 +24,6 @@ Route::prefix('rooms')->controller(RoomController::class)->group(function () {
 });
 
 Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
- Route::get('reservations/{reservationId}/payment-method', [PaymentMethodController::class, 'show']);
 
 Route::middleware('auth:customer')->prefix('reservations')->controller(ReservationController::class)->group(function () {
     Route::get('/', 'index');
@@ -35,7 +34,8 @@ Route::middleware('auth:customer')->prefix('reservations')->controller(Reservati
     Route::get('check-status', 'checkStatus');
     Route::get('my-reservations', 'myReservations');
     Route::get('/{reservationId}/status-history', 'getStatusHistory');
-   
+    Route::get('/{id}/show', 'show');
+
 });
 
 
