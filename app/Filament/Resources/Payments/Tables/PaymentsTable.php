@@ -70,7 +70,7 @@ class PaymentsTable
                         ]);
 
                         $record->reservation->room()->update([
-                            'status' => 2,
+                            'status_id' => 2,
                         ]);
 
                         $record->reservation->statusHistories()->create([

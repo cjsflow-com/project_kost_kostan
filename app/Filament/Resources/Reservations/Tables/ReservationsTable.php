@@ -77,8 +77,8 @@ class ReservationsTable
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->modalHeading('Konfirmasi Pembayaran')
-                    ->modalDescription('Apakah kamu yakin ingin mengkonfirmasi pembayaran ini?')
+                    ->modalHeading('Konfirmasi Pemesanan')
+                    ->modalDescription('Apakah kamu yakin ingin mengkonfirmasi pemesanan ini?')
                     ->modalSubmitActionLabel('Ya, Konfirmasi')
                     ->action(function (Reservation $record) {
                         $record->update([
@@ -104,8 +104,8 @@ class ReservationsTable
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->requiresConfirmation()
-                    ->modalHeading('Batalkan Pembayaran')
-                    ->modalDescription('Apakah kamu yakin ingin membatalkan pembayaran ini?')
+                    ->modalHeading('Batalkan Pemesanan')
+                    ->modalDescription('Apakah kamu yakin ingin membatalkan pemesanan ini?')
                     ->modalSubmitActionLabel('Ya, Batalkan')
                     ->action(function (Reservation $record) {
                         $record->update([
@@ -120,7 +120,7 @@ class ReservationsTable
                         ]);
 
                         Notification::make()
-                            ->title('Pembayaran berhasil dibatalkan')
+                            ->title('Pemesanan berhasil dibatalkan')
                             ->danger()
                             ->send();
                     })

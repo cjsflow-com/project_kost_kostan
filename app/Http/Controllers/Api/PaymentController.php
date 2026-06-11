@@ -87,6 +87,7 @@ class PaymentController extends Controller
             ]);
 
             return response()->json([
+                'success' => false,
                 'message' => 'Batas pembayaran telah habis'
             ], 400);
         }
@@ -119,7 +120,10 @@ class PaymentController extends Controller
             'description' => 'Customer telah mengupload bukti pembayaran, menunggu konfirmasi admin',
         ]);
 
-        return BaseResponse::success($reservation);
+        return response()->json([
+            'success' => true,
+            'message' => 'Bukti pembayaran ' . $payment->payment_code . ' berhasil diupload',
+        ]);
     }
 
 
