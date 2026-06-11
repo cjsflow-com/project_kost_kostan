@@ -30,9 +30,43 @@ class RoomController extends Controller
         );
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $rooms = Room::with(['facilities', 'images'])->latest()->paginate(10);
+        $search = $request->query('search');
+        $sortBy = $request->query('sort_by', 'created_at');
+        $sortDir = $request->query('sort_order', 'desc');
+
+        $allowedSortBy = [
+            'created_at',
+            'title',
+            'room_number',
+            'price_per_month',
+        ];
+
+        $allowedSortDir = [
+            'asc',
+            'desc',
+        ];
+
+        if (!in_array($sortBy, $allowedSortBy)) {
+            $sortBy = 'created_at';
+        }
+
+        if (!in_array($sortDir, $allowedSortDir)) {
+            $sortDir = 'desc';
+        }
+
+
+         $rooms = Room::with(['facilities', 'images'])
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                    ->orWhere('room_number', 'LIKE', "%{$search}%")
+                    ->orWhere('description', 'LIKE', "%{$search}%");
+            });
+        })
+        ->orderBy($sortBy, $sortDir)
+        ->paginate(10);
         return BaseResponse::success([
             'rooms' => RoomResource::collection($rooms),
             'pagination' => [
@@ -41,7 +75,8 @@ class RoomController extends Controller
                 'per_page' => $rooms->perPage(),
                 'total' => $rooms->total(),
             ],
-            'Daftar kamar berhasil diambil'
         ]);
     }
+
+
 }
