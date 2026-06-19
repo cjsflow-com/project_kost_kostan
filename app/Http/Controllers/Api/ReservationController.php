@@ -21,7 +21,7 @@ class ReservationController extends Controller
     {
         //
         $customer = auth('customer')->user();
-        $reservations = Reservation::where('customer_id', $customer->id)->whereNotIn('status', [
+        $reservations = Reservation::with('payment')->where('customer_id', $customer->id)->whereNotIn('status', [
         Reservation::STATUS_APPROVED,
         Reservation::STATUS_CANCELLED,
     ])->latest()->get();

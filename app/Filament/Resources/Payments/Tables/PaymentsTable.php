@@ -85,7 +85,7 @@ class PaymentsTable
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (Payment $record) => in_array($record->status, ['uploaded'])),
+                    ->visible(fn (Payment $record) => in_array($record->status, ['uploaded']) || $record->paymentMethod?->type === 'cash'),
 
                 Action::make('batal')
                     ->label('Batal')
@@ -118,7 +118,7 @@ class PaymentsTable
                             ->danger()
                             ->send();
                     })
-                    ->visible(fn (Payment $record) => in_array($record->status, ['uploaded'])),
+                    ->visible(fn (Payment $record) => in_array($record->status, ['uploaded']) || $record->paymentMethod?->type === 'cash'),
                 // EditAction::make(),
             ])
             ->toolbarActions([

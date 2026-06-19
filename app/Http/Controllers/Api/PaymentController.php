@@ -101,7 +101,7 @@ class PaymentController extends Controller
         $filename = 'payment_' . time() . '.' . $file->getClientOriginalExtension();
         $file->storeAs('public/payment_proofs', $filename);
 
-        $payment = Payment::findOrFail($id);
+        $payment = Payment::where('reservation_id', $reservation->id)->firstOrFail();
         $payment->update([
             'payment_proof' => $filename,
             'status' => Payment::STATUS_UPLOADED,
