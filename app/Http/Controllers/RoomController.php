@@ -58,7 +58,8 @@ class RoomController extends Controller
 
 
          $rooms = Room::with(['facilities', 'images'])
-        ->when($search, function ($query) use ($search) {
+         ->where('status_id', 1)
+         ->when($search, function ($query) use ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'LIKE', "%{$search}%")
                     ->orWhere('room_number', 'LIKE', "%{$search}%")

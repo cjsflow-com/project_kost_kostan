@@ -29,7 +29,7 @@ class Reservation extends Model
        // keys untuk database
     const STATUS_PENDING = 'pending';
     const STATUS_WAITING_PAYMENT = 'waiting_payment';
-    const STATUS_UPLOADED = 'uploaded';
+    const STATUS_UPLOADED = 'payment_uploaded';
     const STATUS_APPROVED = 'approved';
     const STATUS_REJECTED = 'rejected';
     const STATUS_CANCELLED = 'cancelled';

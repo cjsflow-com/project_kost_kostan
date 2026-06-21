@@ -103,7 +103,7 @@ class ReservationController extends Controller
             ReservationStatusHistory::create([
                 'reservation_id' => $reservation->id,
                 'status' => Reservation::STATUS_PENDING,
-                'title' => 'Pending',
+                'title' => 'Menunggu Konfirmasi',
                 'description' => 'Reservasi telah dibuat, menunggu konfirmasi admin',
             ]);
 

@@ -76,8 +76,8 @@ class PaymentsTable
                         $record->reservation->statusHistories()->create([
                             'reservation_id' => $record->reservation->id,
                             'status' => 'approved',
-                            'title' => 'Pembayaran Diverifikasi',
-                            'description' => 'Pembayaran telah diverifikasi, reservasi disetujui',
+                            'title' => 'Disetujui',
+                            'description' => 'Pembayaran telah disetujui, reservasi disetujui',
                         ]);
 
                         Notification::make()
@@ -85,7 +85,7 @@ class PaymentsTable
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (Payment $record) => in_array($record->status, ['uploaded']) || $record->paymentMethod?->type === 'cash'),
+                    ->visible(fn (Payment $record) => ($record->status === 'uploaded' || $record->paymentMethod?->type === 'cash') && $record->reservation?->status !== 'approved'),
 
                 Action::make('batal')
                     ->label('Batal')
@@ -109,7 +109,7 @@ class PaymentsTable
                         $record->reservation->statusHistories()->create([
                             'reservation_id' => $record->reservation->id,
                             'status' => 'rejected',
-                            'title' => 'Pembayaran Ditolak',
+                            'title' => 'Ditolak',
                             'description' => 'Pembayaran telah ditolak, reservasi dibatalkan',
                         ]);
 
@@ -118,7 +118,7 @@ class PaymentsTable
                             ->danger()
                             ->send();
                     })
-                    ->visible(fn (Payment $record) => in_array($record->status, ['uploaded']) || $record->paymentMethod?->type === 'cash'),
+                    ->visible(fn (Payment $record) => ($record->status === 'uploaded' || $record->paymentMethod?->type === 'cash') && $record->reservation?->status !== 'approved'),
                 // EditAction::make(),
             ])
             ->toolbarActions([
