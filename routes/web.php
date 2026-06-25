@@ -9,3 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/reports/{report}/download', [ReportDownloadController::class, 'download'])
     ->name('reports.download');
+
+Route::get('/', function () {
+    return redirect('/admin/login');
+});
