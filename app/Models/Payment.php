@@ -20,6 +20,11 @@ class Payment extends Model
 
     protected $appends = ['status_label'];
 
+    protected $casts = [
+        'amount' => 'integer',
+        'paid_at' => 'datetime',
+    ];
+
     const STATUS_PENDING = 'pending';
     const STATUS_UPLOADED = 'uploaded';
     const STATUS_VERIFIED = 'verified';

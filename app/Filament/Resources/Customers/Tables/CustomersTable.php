@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Models\Customer;
 
 class CustomersTable
 {
@@ -30,7 +31,7 @@ class CustomersTable
                     ->searchable(),
                 TextColumn::make('gender')
                     ->label('Jenis Kelamin')
-                    ->numeric()
+                    ->formatStateUsing(fn ($state) => Customer::GENDER[$state] ?? 'Tidak Diketahui')
                     ->sortable(),
             ])
             ->filters([
@@ -38,7 +39,7 @@ class CustomersTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                // EditAction::make(), 
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

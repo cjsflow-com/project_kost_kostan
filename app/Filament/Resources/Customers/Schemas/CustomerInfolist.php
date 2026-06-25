@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Customers\Schemas;
 
+use App\Models\Customer;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
@@ -19,7 +20,7 @@ class CustomerInfolist
                 TextEntry::make('address')
                     ->placeholder('-'),
                 TextEntry::make('gender')
-                    ->numeric()
+                    ->formatStateUsing(fn ($state) => Customer::GENDER[$state] ?? 'Tidak Diketahui')
                     ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()

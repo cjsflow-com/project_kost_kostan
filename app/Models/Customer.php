@@ -17,7 +17,8 @@ class Customer extends Authenticatable
         'email',
         'phone',
         'password',
-        'gender'
+        'gender',
+        'address',
     ];
 
     const GENDER = [

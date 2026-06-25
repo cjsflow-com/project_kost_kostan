@@ -20,6 +20,7 @@ class AuthController extends Controller
             'phone' => 'required|string|max:20|unique:customers',
             'password' => 'required|string|min:6',
             'gender' => 'required|integer|in:1,2',
+            'address' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()){
