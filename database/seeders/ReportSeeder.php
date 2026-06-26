@@ -29,5 +29,18 @@ class ReportSeeder extends Seeder
             ['model_class' => Room::class],
             ['nama_model' => 'Laporan Kamar']
         );
+
+        Report::updateOrCreate(
+            ['model_class' => Customer::class],
+            ['nama_model' => 'Laporan Pelanggan']
+        );
+        Report::updateOrCreate(
+            ['model_class' => Reservation::class],
+            ['nama_model' => 'Laporan Reservasi']
+        );
+        Report::updateOrCreate(
+            ['model_class' => Payment::class],
+            ['nama_model' => 'Laporan Pembayaran']
+        );
     }
 }
