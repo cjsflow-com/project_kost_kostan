@@ -29,7 +29,10 @@ class YesPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->registration()
+            ->brandLogo(asset('logo_rimbun_cicio_kost.png'))
             ->brandName('Rimbun Cicio Kost')
+            ->brandLogoHeight('15rem')
+            ->favicon(asset('logo_rimbun_cicio_kost.png'))
             ->colors([
                 'primary' => Color::Amber,
             ])
