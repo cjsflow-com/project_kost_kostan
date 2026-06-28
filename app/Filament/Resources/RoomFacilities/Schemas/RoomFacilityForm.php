@@ -17,6 +17,7 @@ class RoomFacilityForm
                     ->required(),
                 FileUpload::make('icon')
                     ->label('Ikon')
+                    ->required()
                     ->image()
                     ->acceptedFileTypes([
                         'image/jpeg',
