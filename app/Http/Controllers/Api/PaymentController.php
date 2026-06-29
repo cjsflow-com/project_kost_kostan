@@ -99,11 +99,11 @@ class PaymentController extends Controller
         // Simpan file bukti pembayaran
         $file = $request->file('payment_proof');
         $filename = 'payment_' . time() . '.' . $file->getClientOriginalExtension();
-        $file->storeAs('public/payment_proofs', $filename);
+        $path = $file->storeAs('payment_proofs', $filename, 'public');
 
         $payment = Payment::where('reservation_id', $reservation->id)->firstOrFail();
         $payment->update([
-            'payment_proof' => $filename,
+            'payment_proof' => $path,
             'status' => Payment::STATUS_UPLOADED,
             'paid_at' => now(),
         ]);

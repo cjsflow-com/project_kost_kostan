@@ -37,6 +37,33 @@ class Payment extends Model
         self::STATUS_REJECTED => 'Pembayaran Ditolak',
     ];
 
+    protected static function booted()
+    {
+        static::deleting(function ($payment) {
+            // Delete the payment proof file from storage
+            $payment->deletePaymentProofFile($payment->payment_proof);
+        });
+
+        // Jalan ketika data diedit/update
+        static::updating(function ($payment) {
+            // Cek apakah field payment_proof berubah
+            if ($payment->isDirty('payment_proof')) {
+                // Ambil payment_proof lama dari database
+                $oldPaymentProof = $payment->getOriginal('payment_proof');
+
+                // Hapus payment_proof lama
+                $payment->deletePaymentProofFile($oldPaymentProof);
+            }
+        });
+    }
+
+    private function deletePaymentProofFile(?string $path): void
+    {
+        if ($path && \Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($path);
+        }
+    }
+
     public function getStatusLabelAttribute()
     {
         return self::STATUS[$this->status] ?? 'Unknown';

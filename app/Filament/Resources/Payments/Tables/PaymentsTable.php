@@ -8,6 +8,8 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -24,8 +26,30 @@ class PaymentsTable
                     ->label('ID Metode Pembayaran')
                     ->sortable(),
                 TextColumn::make('payment_proof')
+                    ->formatStateUsing(fn (?string $state): string => $state ? 'Lihat Bukti' : 'Belum Upload')
+                    ->badge()
+                    ->color(fn (?string $state): string => $state ? 'success' : 'gray')
                     ->label('Bukti Pembayaran')
-                    ->searchable(),
+                    ->searchable()
+                    ->action(
+                        Action::make('lihatBuktiPembayaran')
+                            ->label('Lihat Bukti Pembayaran')
+                            ->modalHeading('Bukti Pembayaran')
+                            ->modalWidth(Width::FourExtraLarge)
+                            ->modalSubmitAction(false)
+                            ->modalCancelActionLabel('Tutup')
+                            ->disabled(fn ($record): bool => blank($record->payment_proof))
+                            ->schema([
+                                ImageEntry::make('payment_proof')
+                                    ->label('Bukti Pembayaran')
+                                    ->disk('public')
+                                    ->visibility('public')
+                                    ->imageHeight(500)
+                                    ->extraImgAttributes([
+                                        'class' => 'object-contain rounded-lg',
+                                    ]),
+                            ])
+                    ),
                 TextColumn::make('payment_code')
                     ->label('Kode Pembayaran')
                     ->searchable(),
