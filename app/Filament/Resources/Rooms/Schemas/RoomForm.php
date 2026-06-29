@@ -33,6 +33,7 @@ class RoomForm
 
                                 Textarea::make('description')
                                     ->label('Deskripsi')
+                                    ->required()
                                     ->default(null)
                                     ->columnSpanFull(),
 
@@ -45,11 +46,13 @@ class RoomForm
                                 TextInput::make('room_size')
                                     ->label('Ukuran Ruangan')
                                     ->placeholder('Contoh: 4x5 m')
+                                    ->required()
                                     ->default(null),
 
                                 TextInput::make('floor')
                                     ->label('Lantai')
                                     ->numeric()
+                                    ->required()
                                     ->default(null),
 
                                 TextInput::make('capacity')
@@ -75,6 +78,7 @@ class RoomForm
                             ->schema([
                                 CheckboxList::make('facilities')
                                     ->label(false)
+                                    ->required()
                                     ->relationship('facilities', 'name')
                                     ->columns(1)
                                     ->searchable(),
@@ -93,6 +97,7 @@ class RoomForm
                                         FileUpload::make('image')
                                             ->label('Foto Kamar')
                                             ->image()
+                                            ->required()
                                             ->imagePreviewHeight('160')
                                             ->acceptedFileTypes([
                                                 'image/jpeg',
