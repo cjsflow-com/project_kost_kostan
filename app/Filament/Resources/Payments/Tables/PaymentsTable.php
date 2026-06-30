@@ -56,6 +56,9 @@ class PaymentsTable
                 TextColumn::make('amount')
                     ->label('Jumlah')
                     ->numeric()
+                    ->formatStateUsing(
+                        fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')
+                    )
                     ->sortable(),
                 TextColumn::make('status')
                     ->label('Status')

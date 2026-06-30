@@ -39,19 +39,31 @@ class ReservationsTable
                     ->sortable(),
                 TextColumn::make('room_price')
                     ->label('Harga Kamar')
-                    ->money()
+                     ->numeric()
+                    ->formatStateUsing(
+                        fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')
+                    )
                     ->sortable(),
                 TextColumn::make('admin_fee')
                     ->label('Biaya Admin')
                     ->numeric()
+                    ->formatStateUsing(
+                        fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')
+                    )
                     ->sortable(),
                 TextColumn::make('deposit')
                     ->label('Deposit')
-                    ->numeric()
+                     ->numeric()
+                    ->formatStateUsing(
+                        fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')
+                    )
                     ->sortable(),
                 TextColumn::make('total_price')
                     ->label('Total Harga')
-                    ->money()
+                     ->numeric()
+                    ->formatStateUsing(
+                        fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')
+                    )
                     ->sortable(),
                 TextColumn::make('status')
                     ->label('Status')
