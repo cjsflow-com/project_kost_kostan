@@ -45,4 +45,14 @@ class Room extends Model
     {
         return $this->hasMany(RoomImage::class);
     }
+
+    public function tenants()
+    {
+        return $this->hasMany(Tenant::class);
+    }
+
+    public function activeTenant()
+    {
+        return $this->hasOne(Tenant::class)->where('status_id', Tenant::STATUS_ACTIVE);
+    }
 }
