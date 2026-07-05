@@ -49,6 +49,7 @@ class RoomsTable
                     ->formatStateUsing(fn ($state) => \App\Models\Room::STATUS[$state] ?? 'Unknown'),
                 TextColumn::make('activeTenant.customer.name')
                     ->label("Nama Penghuni")
+                    ->placeholder('Belum ada penghuni')
                     ->searchable(),
             ])
             ->filters([
