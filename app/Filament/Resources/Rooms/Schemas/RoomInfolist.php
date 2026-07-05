@@ -52,6 +52,9 @@ class RoomInfolist
                                         3 => 'info',
                                         default => 'gray',
                                     }),
+                                TextEntry::make('activeTenant.customer.name')
+                                    ->label('Nama Penghuni')
+                                    ->placeholder('-'),
                                 TextEntry::make('description')
                                     ->label('Deskripsi')
                                     ->columnSpanFull(),
