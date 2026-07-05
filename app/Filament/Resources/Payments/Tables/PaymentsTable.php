@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Payments\Tables;
 use Filament\Actions\BulkActionGroup;
 use App\Models\Payment;
 use App\Models\Tenant;
+use Carbon\Carbon;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -104,8 +105,8 @@ class PaymentsTable
                         Tenant::create([
                             'room_id' => $record->reservation->room_id,
                             'customer_id' => $record->reservation->customer_id,
-                            'start_date' => $record->reservation->start_date,
-                            'end_date' => $record->reservation->start_date->copy()->addMonths($record->reservation->duration),
+                            'start_date' => Carbon::parse($record->reservation->start_date),
+                            'end_date' => Carbon::parse($record->reservation->start_date)->addMonths($record->reservation->duration),
                             'status_id' => Tenant::STATUS_ACTIVE,
                         ]);
 
