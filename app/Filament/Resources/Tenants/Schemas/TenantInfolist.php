@@ -14,13 +14,14 @@ class TenantInfolist
             ->components([
                 TextEntry::make('customer.name')
                     ->label('Nama Penghuni'),
-                TextEntry::make('room.number')
+                TextEntry::make('room.room_number')
                     ->label('Nomor Kamar'),
                 TextEntry::make('start_date')
                     ->label('Tanggal Masuk')
                     ->date('d M Y'),
-                TextEntry::make('reservation.reservation_code')
+                TextEntry::make('customer.reservations.reservation_code')
                     ->label('Kode Reservasi')
+                    ->placeholder('-')
                     ->formatStateUsing(fn ($state): string => 'Reservasi #' . $state),
                 TextEntry::make('end_date')
                     ->label('Tanggal Keluar')

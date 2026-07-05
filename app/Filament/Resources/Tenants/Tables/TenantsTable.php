@@ -26,8 +26,9 @@ class TenantsTable
                 TextColumn::make('customer.name')
                     ->searchable()
                     ->label('Penghuni Aktif'),
-                TextColumn::make('reservation.reservation_code')
+                TextColumn::make('customer.reservations.reservation_code')
                     ->searchable()
+                    ->placeholder('-')
                     ->label('Kode Reservasi'),
                 TextColumn::make('start_date')
                     ->label('Tanggal Mulai')
