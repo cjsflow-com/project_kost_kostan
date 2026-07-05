@@ -23,6 +23,14 @@ class Tenant extends Model
         self::STATUS_INACTIVE => 'Inactive',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'start_date' => 'date',
+            'end_date' => 'date',
+        ];
+    }
+
     public function getStatusNameAttribute()
     {
         return self::STATUS[$this->status_id] ?? 'Unknown';
