@@ -105,7 +105,7 @@ class PaymentsTable
                             'room_id' => $record->reservation->room_id,
                             'customer_id' => $record->reservation->customer_id,
                             'start_date' => $record->reservation->start_date,
-                            'end_date' => $record->reservation->start_date->addMonths($record->reservation->duration),
+                            'end_date' => $record->reservation->start_date->copy()->addMonths($record->reservation->duration),
                             'status_id' => Tenant::STATUS_ACTIVE,
                         ]);
 
