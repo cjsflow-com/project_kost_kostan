@@ -55,7 +55,7 @@ class CustomerResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Pelanggan & Penghuni';
+        return 'Kelola Penghuni';
     }
 
     public static function getPages(): array
