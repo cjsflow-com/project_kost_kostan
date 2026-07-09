@@ -23,7 +23,7 @@ class TenantResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'tenant';
-    protected static ?string $navigationLabel = 'Penghuni';
+    protected static ?string $navigationLabel = 'Penghuni Yang Menemapati Kamar';
 
     public static function form(Schema $schema): Schema
     {

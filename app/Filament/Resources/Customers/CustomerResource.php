@@ -24,7 +24,7 @@ class CustomerResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'customer';
 
-    protected static ?string $navigationLabel = 'Pelanggan';
+    protected static ?string $navigationLabel = 'Penghuni';
 
     public static function form(Schema $schema): Schema
     {
