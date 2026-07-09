@@ -26,6 +26,10 @@ class CustomerResource extends Resource
 
     protected static ?string $navigationLabel = 'Penghuni';
 
+    protected static ?string $modelLabel = 'Penghuni';
+
+    protected static ?string $pluralModelLabel = 'Penghuni';
+
     public static function form(Schema $schema): Schema
     {
         return CustomerForm::configure($schema);
